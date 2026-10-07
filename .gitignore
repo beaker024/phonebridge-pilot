@@ -1,0 +1,11 @@
+**/build/
+.gradle/
+local.properties
+**/__pycache__/
+*.pyc
+*.jks
+*.keystore
+.phonebridge/
+artifacts/*.apk
+artifacts/*.zip
+artifacts/jvm-tests/

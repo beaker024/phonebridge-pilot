@@ -1,0 +1,53 @@
+name: Free public-repository pilot build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    # This workflow refuses private repositories. Standard PUBLIC-repo runners
+    # are free; no larger runners, paid services or model APIs are used.
+    if: github.event.repository.visibility == 'public' || github.repository_visibility == 'public'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+          cache-disabled: true
+      - name: Install bridge test dependencies
+        run: python -m pip install -r bridge/requirements.txt PyYAML
+      - name: Offline security and bridge tests
+        run: bash scripts/check-local.sh
+      - name: Install Android build dependencies
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
+      - name: Compile both APKs and run Android lint
+        run: gradle -p android --no-daemon :controller:assembleDebug :sandbox:assembleDebug :controller:lintDebug :sandbox:lintDebug
+      - name: Collect installable artifacts
+        run: |
+          cp android/controller/build/outputs/apk/debug/controller-debug.apk artifacts/phonebridge-pilot.apk
+          cp android/sandbox/build/outputs/apk/debug/sandbox-debug.apk artifacts/phonebridge-sandbox.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose artifacts/phonebridge-pilot.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose artifacts/phonebridge-sandbox.apk
+          sha256sum artifacts/*.apk > artifacts/APK-SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phonebridge-pilot-apks
+          path: |
+            artifacts/*.apk
+            artifacts/APK-SHA256SUMS.txt
+            artifacts/*tests.txt
+            artifacts/java-syntax.txt
+          retention-days: 1

@@ -1,0 +1,1 @@
+<resources><string name="service_description">Phone-local, opt-in test controller. Controls only PhoneBridge Sandbox. Does not control settings, password managers, or other apps.</string></resources>

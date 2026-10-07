@@ -1,0 +1,6 @@
+<resources>
+    <item type="id" name="counter_button" />
+    <item type="id" name="counter_value" />
+    <item type="id" name="practice_field" />
+    <item type="id" name="practice_scroll" />
+</resources>
