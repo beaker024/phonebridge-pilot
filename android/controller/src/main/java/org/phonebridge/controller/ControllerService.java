@@ -129,10 +129,10 @@ public final class ControllerService extends AccessibilityService {
             indicatorText = new TextView(this); indicatorText.setTextColor(Color.WHITE);
             indicator.addView(indicatorText, new LinearLayout.LayoutParams(0, -1, 1));
             Button pause = new Button(this); pause.setText("Pause");
-            pause.setAccessibilityDataSensitive(true);
+            pause.setAccessibilityDataSensitive(View.ACCESSIBILITY_DATA_SENSITIVE_YES);
             pause.setOnClickListener(v -> { if (paused) resumeLocal(); else pauseLocal(); });
             indicator.addView(pause);
-            Button stop = new Button(this); stop.setText("STOP"); stop.setAccessibilityDataSensitive(true);
+            Button stop = new Button(this); stop.setText("STOP"); stop.setAccessibilityDataSensitive(View.ACCESSIBILITY_DATA_SENSITIVE_YES);
             stop.setOnClickListener(v -> stopLocal()); indicator.addView(stop);
             WindowManager.LayoutParams p = new WindowManager.LayoutParams(-1, barHeight(),
                 WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,

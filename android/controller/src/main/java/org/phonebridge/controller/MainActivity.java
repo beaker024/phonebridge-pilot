@@ -97,7 +97,7 @@ public final class MainActivity extends Activity {
     private void addButton(LinearLayout box, String label, Runnable action) {
         Button b = new Button(this); b.setText(label);
         b.setFilterTouchesWhenObscured(true);
-        b.setAccessibilityDataSensitive(true);
+        b.setAccessibilityDataSensitive(View.ACCESSIBILITY_DATA_SENSITIVE_YES);
         b.setOnTouchListener((v, event) -> (event.getFlags() &
             (MotionEvent.FLAG_WINDOW_IS_OBSCURED | MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED)) != 0);
         b.setOnClickListener(v -> action.run()); box.addView(b);
